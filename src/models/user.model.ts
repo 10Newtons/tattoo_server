@@ -1,24 +1,32 @@
-import { DataTypes, Sequelize } from 'sequelize';
-import { dbConfig } from '../db';
+import { Table, Column, Model, DataType, HasOne, HasMany } from 'sequelize-typescript';
+import { Role } from './role.model';
+import { Token } from './token.model';
 
-// export interface UserSchemaAttributes {
-//   id: number;
-//   email: string;
-//   password: string;
-//   role: string;
-//   name: string;
-//   phone: string;
-//   instagram: string;
-// }
+interface UserAttributes {
+  email: string;
+  password: string;
+}
 
-export const UserSchema = dbConfig.define('user', {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  email: { type: DataTypes.STRING, unique: true },
-  password: { type: DataTypes.STRING },
-  role: { type: DataTypes.STRING, defaultValue: 'USER' },
-  name: { type: DataTypes.STRING },
-  phone: { type: DataTypes.STRING },
-  instagram: { type: DataTypes.STRING },
-});
+@Table({ tableName: 'users' })
+export class User extends Model<User, UserAttributes> {
+  @Column({ type: DataType.STRING, unique: true, allowNull: false })
+  email!: string;
 
-// export default UserSchema;
+  @Column({ type: DataType.STRING, allowNull: false })
+  password!: string;
+
+  @Column({ type: DataType.STRING })
+  name?: string;
+
+  @Column({ type: DataType.STRING })
+  phone?: string;
+
+  @Column({ type: DataType.STRING })
+  instagram?: string;
+
+  @HasOne(() => Role)
+  role!: Role;
+
+  @HasMany(() => Token)
+  token!: Token[];
+}
